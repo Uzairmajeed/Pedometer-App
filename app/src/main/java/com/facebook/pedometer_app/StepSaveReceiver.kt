@@ -24,6 +24,11 @@ class StepSaveReceiver : BroadcastReceiver() {
                 stepHistory.add(StepHistoryItem(currentDate, currentTime, stepCount))
                 listDataStore.saveStepHistory(stepHistory)
                 resetStepCountInSharedPreferences(context)
+
+                // Notify the service to reset the step count
+                val resetIntent = Intent(context, StepCounterService::class.java)
+                resetIntent.action = StepCounterService.ACTION_RESET_STEP_COUNT
+                context.startService(resetIntent)
             }
         }
     }

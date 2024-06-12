@@ -29,6 +29,10 @@ class StepCounterService : Service(), SensorEventListener {
     private var stepCount = 0
     private lateinit var listDataStore: ListDataStore
 
+    companion object {
+        const val ACTION_RESET_STEP_COUNT = "com.facebook.pedometer_app.ACTION_RESET_STEP_COUNT"
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -64,6 +68,11 @@ class StepCounterService : Service(), SensorEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForegroundService()
+
+        if (intent?.action == ACTION_RESET_STEP_COUNT) {
+            resetStepCount()
+        }
+
         return START_STICKY
     }
 
@@ -102,6 +111,11 @@ class StepCounterService : Service(), SensorEventListener {
             putInt("stepCount", stepCount)
             apply()
         }
+    }
+
+    private fun resetStepCount() {
+        stepCount = 0
+        saveStepCountToSharedPreferences()
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
