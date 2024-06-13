@@ -32,8 +32,22 @@
     <ListView
         android:id="@+id/stepHistoryListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:dividerHeight="1dp"/>
+
+    <TextView
+        android:id="@+id/dayCounterTextView"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:gravity="center"
+        android:text="Daily Counted Steps"
+        android:textColor="@color/white"
+        android:background="@color/black"/>
+    <Button
+        android:id="@+id/dayResetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset Daily Counter"/>
 
 
 </LinearLayout>

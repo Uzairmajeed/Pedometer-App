@@ -104,7 +104,6 @@ class StepCounterService : Service(), SensorEventListener {
             saveStepCountToSharedPreferences()
         }
     }
-
     private fun saveStepCountToSharedPreferences() {
         val sharedPreferences = getSharedPreferences("StepCounterPrefs", Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {

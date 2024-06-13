@@ -49,4 +49,15 @@ class ListDataStore(private val context: Context) {
             mutableListOf()
         }
     }
+
+    fun clearStepHistory() {
+        val dataStoreKey = stringPreferencesKey("stepHistoryList")
+        runBlocking {
+            context.dataStore.edit { preferences ->
+                preferences.remove(dataStoreKey)
+            }
+        }
+    }
+
+
 }

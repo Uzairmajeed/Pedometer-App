@@ -14,6 +14,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,6 +27,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var stepCounterSensor: Sensor? = null
     private var stepCount = 0
     private lateinit var stepCountText: TextView
+    private lateinit var dayTextview: TextView
+    private lateinit var dayresetButton: Button
     private lateinit var resetButton: Button
     private lateinit var nextButton: Button
     private lateinit var stepHistoryListView: ListView
@@ -36,6 +41,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         setContentView(R.layout.activity_main)
 
         stepCountText = findViewById(R.id.stepCountText)
+        dayTextview = findViewById(R.id.dayCounterTextView)
+        dayresetButton = findViewById(R.id.dayResetButton)
         resetButton = findViewById(R.id.resetButton)
         nextButton = findViewById(R.id.MoveToNext)
         stepHistoryListView = findViewById(R.id.stepHistoryListView)
@@ -44,6 +51,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         ContextCompat.startForegroundService(this, serviceIntent)
 
         listDataStore = ListDataStore.getInstance(this)
+        loadTotalSteps()
 
         // Load step history from DataStore
         stepHistory.addAll(listDataStore.loadStepHistory())
@@ -76,6 +84,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             val intent = Intent(this@MainActivity, Accelometer::class.java)
             startActivity(intent)
         }
+
+        dayresetButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                listDataStore.clearStepHistory()
+                dayTextview.text = "Total Steps: 0"
+            }
+        }
     }
 
     private fun checkPermissions() {
@@ -100,6 +115,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun updateStepCountText() {
         stepCountText.text = "Steps Count: $stepCount"
+    }
+
+    private fun loadTotalSteps() {
+        CoroutineScope(Dispatchers.Main).launch {
+            val stepHistory = listDataStore.loadStepHistory()
+            val totalSteps = stepHistory.sumOf { it.steps }
+            dayTextview.text = "Total Steps: $totalSteps"
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
